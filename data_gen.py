@@ -57,16 +57,16 @@ def generate_borrow_groups(citizens,residency_map,n=20):
     return b_idx, borrow
     
 def generate_social_network(citizens,residency_map):
-    a0 = 1
-    a1 = 0.1
-    a2 = 1
+    a0 = 0.125
+    a1 = 0.25
+    a2 = 0.1
     net = pd.DataFrame()
     for i in citizens.index:
         for j in citizens.index:
             if i!=j:
-                p_ij = scipy.special.expit( -a0*(citizens['age'].loc[i]-citizens['age'].loc[j]) 
+                p_ij = scipy.special.expit( -a0*np.abs(citizens['age'].loc[i]-citizens['age'].loc[j]) 
                               + a1*(residency_map[i]==residency_map[j]) 
-                              - a2*(citizens['income'].loc[i]-citizens['income'].loc[j]) )
+                              - a2*np.abs(citizens['income'].loc[i]-citizens['income'].loc[j]) )
                 a_ij = np.random.binomial(1, p_ij)
                 if a_ij>0:
                     net = net.append([[i,j,p_ij],[j,i,p_ij]])
