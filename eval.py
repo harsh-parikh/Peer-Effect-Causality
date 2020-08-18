@@ -10,6 +10,7 @@ from data_gen import *
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 
@@ -134,13 +135,33 @@ f_repayment = learn_repayment(borrowing_groups, loans, borrowing_groups_rel, soc
 X0, repayment0 = estimate_repayment( f_repayment, borrowing_groups, loans, borrowing_groups_rel, social_net )
 X1, repayment1 = estimate_repayment( f_repayment, borrowing_groups, loans, borrowing_groups_rel, social_net_1 )
 
+sns.set()
+
 fig = plt.figure()
 plt.scatter(X0['social_net'],repayment0)
 plt.scatter(X0['social_net'],borrowing_groups['repayment'])
 plt.legend(['estimated','truth'])
+plt.ylabel('Repayment Rate (%)')
+plt.xlabel('Summarized(Social Network Attribute)')
+fig.savefig('Figures/socialNet_vs_repayment0.png')
 
 fig = plt.figure()
 plt.plot([0,100],[0,100],c='black')
 plt.scatter(borrowing_groups['repayment'],repayment0)
 plt.scatter(borrowing_groups_1['repayment'],repayment1)
 plt.legend(['x=y','control','treated'])
+plt.ylabel('Est. Repayment Rate (%)')
+plt.xlabel('True Repayment Rate (%)')
+fig.savefig('Figures/estimated_vs_true_repayment.png')
+
+fig = plt.figure()
+plt.boxplot(repayment0,positions=[0])
+plt.boxplot(repayment1,positions=[1])
+plt.boxplot(borrowing_groups_1['repayment'],positions=[2])
+plt.xticks(ticks=[0,1,2],
+           labels=['Repayment Rate\n (before intervention)',
+                   'Est. Repayment Rate\n (after intervention)',
+                   'True Repayment Rate\n (after intervention)'], rotation=0)
+plt.ylabel('Repayment Rate (%)')
+plt.tight_layout()
+fig.savefig('Figures/boxplot_estimation_repayment.png')
