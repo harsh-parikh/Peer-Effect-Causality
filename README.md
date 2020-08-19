@@ -1,2 +1,2 @@
-# NSF_REL_INF
+# Estimating Peer Effects
  Causal Inference for Intervention on Relationships 
